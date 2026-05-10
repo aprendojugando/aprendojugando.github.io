@@ -1079,27 +1079,27 @@
 
         <div class="form-section-title"><span>📅</span> Semanas a inscribir</div>
         <div class="weeks-grid" id="weeks-grid">
-          <div class="week-option" onclick="toggleWeek(this)">
+          <div class="week-option" id="w1">
             <input type="checkbox" name="semana" value="semana1" style="display:none;">
             <span class="week-check">✓</span>
             <span>Semana 1<br><small style="font-weight:600;color:#888">6 al 10 de julio</small></span>
           </div>
-          <div class="week-option" onclick="toggleWeek(this)">
+          <div class="week-option" id="w2">
             <input type="checkbox" name="semana" value="semana2" style="display:none;">
             <span class="week-check">✓</span>
             <span>Semana 2<br><small style="font-weight:600;color:#888">13 al 17 de julio</small></span>
           </div>
-          <div class="week-option" onclick="toggleWeek(this)">
+          <div class="week-option" id="w3">
             <input type="checkbox" name="semana" value="semana3" style="display:none;">
             <span class="week-check">✓</span>
             <span>Semana 3<br><small style="font-weight:600;color:#888">20 al 24 de julio</small></span>
           </div>
-          <div class="week-option" onclick="toggleWeek(this)">
+          <div class="week-option" id="w4">
             <input type="checkbox" name="semana" value="semana4" style="display:none;">
             <span class="week-check">✓</span>
             <span>Semana 4<br><small style="font-weight:600;color:#888">27 al 31 de julio</small></span>
           </div>
-          <div class="week-option" onclick="toggleWeek(this, true)">
+          <div class="week-option" id="w5">
             <div class="rec-badge">⭐ Más ahorro</div>
             <input type="checkbox" name="semana" value="completo" style="display:none;">
             <span class="week-check">✓</span>
@@ -1110,8 +1110,40 @@
 
         <div class="form-section-title"><span>💳</span> Información de pago</div>
         <div class="form-grid">
-          <div class="form-group">
-            <label for="metodo_pago">Método de pago *</label>
+          <div id="price-summary" style="display:none;grid-column:1/-1;background:linear-gradient(135deg,#F0FFF7,#F0FBFF);border:2px solid var(--grass);border-radius:16px;padding:20px 24px;margin-top:4px;">
+            <div style="font-weight:800;font-size:1rem;color:var(--grass);margin-bottom:12px;">💰 Resumen de tu inscripción</div>
+            <div style="display:grid;gap:6px;font-size:0.88rem;">
+              <div style="display:flex;justify-content:space-between;">
+                <span style="color:#666;font-weight:600;">Periodo de precio</span>
+                <span id="ps-periodo" style="font-weight:800;color:var(--coral);"></span>
+              </div>
+              <div style="display:flex;justify-content:space-between;">
+                <span style="color:#666;font-weight:600;">Semanas seleccionadas</span>
+                <span id="ps-semanas" style="font-weight:800;"></span>
+              </div>
+              <div style="display:flex;justify-content:space-between;">
+                <span style="color:#666;font-weight:600;">Precio por semana</span>
+                <span id="ps-precio-semana" style="font-weight:800;"></span>
+              </div>
+              <div id="ps-descuento-row" style="display:flex;justify-content:space-between;">
+                <span style="color:#666;font-weight:600;">Descuento</span>
+                <span id="ps-descuento" style="font-weight:800;color:var(--grass);"></span>
+              </div>
+              <div style="border-top:2px dashed #ccc;margin:6px 0;"></div>
+              <div style="display:flex;justify-content:space-between;">
+                <span style="font-weight:800;font-size:1rem;">Total a pagar</span>
+                <span id="ps-total" style="font-weight:900;font-size:1.2rem;color:var(--coral);"></span>
+              </div>
+              <div style="display:flex;justify-content:space-between;">
+                <span style="color:#666;font-weight:600;">Anticipo mínimo ahora</span>
+                <span id="ps-anticipo" style="font-weight:800;color:var(--grass);"></span>
+              </div>
+              <div style="display:flex;justify-content:space-between;">
+                <span style="color:#666;font-weight:600;">Saldo al inicio del curso</span>
+                <span id="ps-saldo" style="font-weight:800;"></span>
+              </div>
+            </div>
+          </div>
             <select id="metodo_pago" onchange="showBankInfo()">
               <option value="">Selecciona...</option>
               <option>Transferencia bancaria</option>
@@ -1235,20 +1267,50 @@
     document.getElementById('formulario').scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
-  function toggleWeek(el, isAll) {
-    const allOptions = document.querySelectorAll('.week-option');
-    if (isAll) {
-      const others = [...allOptions].filter(o => !o.isSameNode(el));
-      if (!el.classList.contains('selected'))
-        others.forEach(o => { o.classList.remove('selected'); o.querySelector('input').checked = false; });
-    } else {
-      const completo = document.querySelector('.week-option:last-child');
-      completo.classList.remove('selected');
-      completo.querySelector('input').checked = false;
-    }
-    el.classList.toggle('selected');
-    el.querySelector('input').checked = el.classList.contains('selected');
-    updateSavingHint();
+  // ── SEMANAS ─────────────────────────────────────────────────
+  document.addEventListener('DOMContentLoaded', function() {
+    const weekOptions = document.querySelectorAll('.week-option');
+    weekOptions.forEach(function(el) {
+      el.addEventListener('click', function(e) {
+        e.stopPropagation();
+        const isAll = el.id === 'w5';
+        if (isAll) {
+          const wasSelected = el.classList.contains('selected');
+          weekOptions.forEach(function(o) {
+            o.classList.remove('selected');
+            o.querySelector('input').checked = false;
+          });
+          if (!wasSelected) {
+            el.classList.add('selected');
+            el.querySelector('input').checked = true;
+          }
+        } else {
+          // deselect curso completo
+          const completo = document.getElementById('w5');
+          completo.classList.remove('selected');
+          completo.querySelector('input').checked = false;
+          // toggle this one
+          el.classList.toggle('selected');
+          el.querySelector('input').checked = el.classList.contains('selected');
+        }
+        updateSavingHint();
+      });
+    });
+  });
+
+  // ── PRECIOS POR PERIODO ──────────────────────────────────────
+  const PRECIOS = {
+    1: { base: 1250, desc: { 1: 0, 2: 5, 3: 10, 4: 10 }, periodo: '🔥 Precio anticipado (18–31 mayo)' },
+    2: { base: 1300, desc: { 1: 0, 2: 5, 3: 10, 4: 10 }, periodo: 'Precio intermedio (1–15 junio)' },
+    3: { base: 1350, desc: { 1: 0, 2: 5, 3: 10, 4: 10 }, periodo: 'Precio regular (16 junio en adelante)' },
+  };
+
+  function getPeriodo() {
+    const hoy = new Date();
+    const y = hoy.getFullYear();
+    if (hoy < new Date(y, 5, 1))  return 1; // antes del 1 junio
+    if (hoy < new Date(y, 5, 16)) return 2; // antes del 16 junio
+    return 3;
   }
 
   function updateSavingHint() {
@@ -1260,25 +1322,57 @@
     // Update anticipo amount
     const monto = document.getElementById('monto');
     const montoHint = document.getElementById('monto-hint');
+
+    // Update price summary
+    const summary = document.getElementById('price-summary');
+
     if (count === 0) {
       monto.value = '';
       monto.placeholder = '$500';
       montoHint.textContent = 'Selecciona las semanas arriba para calcular el anticipo mínimo.';
       montoHint.style.color = 'var(--muted)';
-    } else {
-      const anticipo = count * 500;
-      monto.value = '$' + anticipo.toLocaleString('es-MX');
-      const labels = ['', '1 semana', '2 semanas', '3 semanas', '4 semanas (curso completo)'];
-      montoHint.textContent = '✅ Anticipo mínimo para ' + labels[count] + ': $' + anticipo.toLocaleString('es-MX');
-      montoHint.style.color = 'var(--grass)';
+      summary.style.display = 'none';
+      if (hint) hint.style.display = 'none';
+      return;
     }
 
-    if (count === 0) { hint.style.display = 'none'; return; }
-    hint.style.display = 'block';
-    if (count === 1) hint.textContent = '💡 ¡Inscribe 2 o más semanas y obtén descuento adicional!';
-    else if (count === 2) hint.textContent = '🎉 ¡Excelente! Con 2 semanas obtienes un 5% de descuento adicional.';
-    else if (count === 3) hint.textContent = '🌟 ¡Increíble elección! Con 3 semanas obtienes un 10% de descuento adicional.';
-    else hint.textContent = '🏆 ¡Curso completo! Máximo descuento del 10% y la experiencia completa para tu hijo.';
+    const anticipo = count * 500;
+    monto.value = '$' + anticipo.toLocaleString('es-MX');
+    const labels = ['', '1 semana', '2 semanas', '3 semanas', '4 semanas (curso completo)'];
+    montoHint.textContent = '✅ Anticipo mínimo para ' + labels[count] + ': $' + anticipo.toLocaleString('es-MX');
+    montoHint.style.color = 'var(--grass)';
+
+    // Calculate total
+    const p = getPeriodo();
+    const info = PRECIOS[p];
+    const descPct = info.desc[count];
+    const subtotal = info.base * count;
+    const descuento = Math.round(subtotal * descPct / 100);
+    const total = subtotal - descuento;
+    const saldo = total - anticipo;
+
+    summary.style.display = 'block';
+    document.getElementById('ps-periodo').textContent = info.periodo;
+    document.getElementById('ps-semanas').textContent = labels[count];
+    document.getElementById('ps-precio-semana').textContent = '$' + info.base.toLocaleString('es-MX');
+    const descRow = document.getElementById('ps-descuento-row');
+    if (descPct > 0) {
+      descRow.style.display = 'flex';
+      document.getElementById('ps-descuento').textContent = '-$' + descuento.toLocaleString('es-MX') + ' (' + descPct + '%)';
+    } else {
+      descRow.style.display = 'none';
+    }
+    document.getElementById('ps-total').textContent = '$' + total.toLocaleString('es-MX');
+    document.getElementById('ps-anticipo').textContent = '$' + anticipo.toLocaleString('es-MX');
+    document.getElementById('ps-saldo').textContent = '$' + saldo.toLocaleString('es-MX');
+
+    if (hint) {
+      hint.style.display = 'block';
+      if (count === 1) hint.textContent = '💡 ¡Inscribe 2 o más semanas y obtén descuento adicional!';
+      else if (count === 2) hint.textContent = '🎉 ¡Excelente! Con 2 semanas obtienes un 5% de descuento.';
+      else if (count === 3) hint.textContent = '🌟 ¡Increíble elección! Con 3 semanas obtienes un 10% de descuento.';
+      else hint.textContent = '🏆 ¡Curso completo! Máximo descuento del 10% y la experiencia completa para tu hijo.';
+    }
   }
 
   function showFileName(input) {
@@ -1381,6 +1475,8 @@
       num_semanas:  count,
       metodo_pago:  metodo,
       anticipo:     '$' + (count * 500).toLocaleString('es-MX'),
+      total:        document.getElementById('ps-total') ? document.getElementById('ps-total').textContent : '',
+      periodo_precio: document.getElementById('ps-periodo') ? document.getElementById('ps-periodo').textContent : '',
     };
 
     const btn = document.querySelector('.btn-submit');
