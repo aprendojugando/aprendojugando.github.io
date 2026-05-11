@@ -949,7 +949,7 @@
       <div class="step-num">4</div>
       <div class="step-content">
         <h4>Recibe tu recibo por WhatsApp</h4>
-        <p>Validamos tu pago y te enviamos tu recibo oficial de inscripción por WhatsApp.</p>
+        <p>Validamos tu pago y te enviamos tu recibo oficial de inscripción por WhatsApp en un máximo de <strong>24 horas</strong>.</p>
       </div>
     </div>
     <div class="step">
@@ -1165,7 +1165,7 @@
               <input type="file" id="comprobante" accept=".jpg,.jpeg,.png,.pdf" style="display:none" onchange="showFileName(this)">
               <div id="file-name" style="margin-top:8px;font-size:0.85rem;color:var(--grass);font-weight:700;"></div>
             </div>
-            <div class="upload-note">📲 Una vez validado tu comprobante, recibirás tu recibo oficial por WhatsApp.</div>
+            <div class="upload-note">📲 Una vez validado tu comprobante (máx. 24 hrs), recibirás tu recibo oficial por WhatsApp.</div>
           </div>
         </div>
 
@@ -1182,7 +1182,7 @@
       <div id="success-msg">
         <div class="success-icon">🎊</div>
         <h3>¡Registro recibido!</h3>
-        <p>Gracias por inscribir a tu hijo en la <strong>2ª edición de Aprendo Jugando</strong>. En cuanto validemos tu comprobante de pago, recibirás tu <strong>recibo oficial por WhatsApp</strong>.</p>
+        <p>Gracias por inscribir a tu hijo en la <strong>2ª edición de Aprendo Jugando</strong>. En un máximo de <strong>24 horas</strong> validaremos tu comprobante de pago y recibirás tu <strong>recibo oficial por WhatsApp</strong>.</p>
         <div style="margin-top:24px;padding:16px;background:#F0FFF7;border-radius:14px;border:2px solid var(--grass);">
           <p style="font-size:0.9rem;color:var(--grass);font-weight:700;">✅ ¡Nos vemos el 6 de julio para el mejor verano de su vida! 🌞</p>
         </div>
@@ -1197,7 +1197,7 @@
   <h2 class="section-title">Tu recibo de inscripción 📋</h2>
   <p class="section-sub">Así lucirá el recibo oficial que recibirás por WhatsApp una vez validado tu pago.</p>
   <div class="comprobante-wrapper">
-    <p class="comprobante-intro">Validamos tu comprobante y te enviamos tu recibo oficial por WhatsApp. Guárdalo como confirmación de tu lugar en el curso.</p>
+    <p class="comprobante-intro">Validamos tu comprobante en un máximo de 24 horas y te enviamos tu recibo oficial por WhatsApp. Guárdalo como confirmación de tu lugar en el curso.</p>
     <div class="comprobante-card">
       <div class="comp-header">
         <h4>🎓 Recibo de Inscripción</h4>
@@ -1428,11 +1428,12 @@
             </tr>`).join('')}
         </table>
         <div style="margin-top:12px;font-size:0.8rem;color:#888;font-weight:600;">⚠️ Guarda tu comprobante y súbelo en el campo de abajo.</div>
+        ${key === 'deposito' ? `<div style="margin-top:10px;background:#FFF8E1;border:1px solid #FFD54F;border-radius:10px;padding:10px 14px;font-size:0.82rem;color:#7B5800;font-weight:600;">📝 <strong>Importante:</strong> Al realizar tu depósito en Oxxo, guarda tu ticket y tómale una foto. En el campo de comprobante sube esa foto — nosotros la identificaremos con tu nombre registrado en este formulario.</div>` : ''}
       </div>`;
   }
 
   // ── SUBMIT → GOOGLE SHEETS ──────────────────────────────────
-  const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxShnG-XVS4Fvh8GgzQXDa98Wjz54GzWeY0K0rdJ5bBbWv68nBcqgFS-CqaWBEsfJnxJA/exec';
+  const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxoVIw6Wd3AJH8IwEe03SU16Gn8Var57M9jWMvNGhnlWhDa3kaxoOIpbjQeiz0bJMQ5xw/exec';
 
   function submitForm() {
     const nombre  = document.getElementById('nombre_nino').value.trim();
