@@ -912,7 +912,7 @@
       <div class="payment-methods">
         <div class="payment-method">⚠️ El anticipo no es reembolsable</div>
         <div class="payment-method">🏦 Transferencia bancaria</div>
-        <div class="payment-method">🏧 Depósito bancario</div>
+        <div class="payment-method">🏪 Depósito en efectivo en tiendas Oxxo</div>
       </div>
     </div>
   </div>
@@ -1147,7 +1147,7 @@
             <select id="metodo_pago" onchange="showBankInfo()">
               <option value="">Selecciona...</option>
               <option>Transferencia bancaria</option>
-              <option>Depósito bancario</option>
+              <option>Depósito en efectivo en tiendas Oxxo</option>
             </select>
           </div>
           <div class="form-group full" id="bank-info-box" style="display:none;"></div>
@@ -1387,20 +1387,19 @@
       title: 'Datos para Transferencia Bancaria',
       color: '#1A73E8',
       rows: [
-        { label: 'Banco',        value: 'BBVA' },
-        { label: 'Titular',      value: 'Nombre del Titular' },
-        { label: 'CLABE',        value: '012 345 678 901 234 567' },
+        { label: 'Institución',  value: 'Mercado Pago W' },
+        { label: 'Beneficiario', value: 'Yadneli Escobedo Gonzalez' },
+        { label: 'CLABE',        value: '722969020666188192' },
         { label: 'Concepto',     value: 'Anticipo APJ2026 + nombre del niño' },
       ]
     },
     deposito: {
       icon: '🏪',
-      title: 'Datos para Depósito en OXXO',
+      title: 'Datos para Depósito en Oxxo',
       color: '#E53935',
       rows: [
-        { label: 'Banco',        value: 'BBVA' },
-        { label: 'Titular',      value: 'Nombre del Titular' },
-        { label: 'N° de tarjeta','value': '4152 3141 5926 5358' },
+        { label: 'Beneficiario', value: 'Yadneli Escobedo Gonzalez' },
+        { label: 'N° de tarjeta', value: '5101 2514 3337 7769' },
         { label: 'Concepto',     value: 'Anticipo APJ2026 + nombre del niño' },
       ]
     }
