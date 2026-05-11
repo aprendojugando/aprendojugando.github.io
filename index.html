@@ -1390,7 +1390,7 @@
         { label: 'Institución',  value: 'Mercado Pago W' },
         { label: 'Beneficiario', value: 'Yadneli Escobedo Gonzalez' },
         { label: 'CLABE',        value: '722969020666188192' },
-        { label: 'Concepto',     value: 'Anticipo APJ2026 + nombre del niño' },
+        { label: 'Concepto',     value: 'Anticipo + nombre del niño' },
       ]
     },
     deposito: {
@@ -1398,9 +1398,10 @@
       title: 'Datos para Depósito en Oxxo',
       color: '#E53935',
       rows: [
+        { label: 'Banco',        value: 'Nu México' },
         { label: 'Beneficiario', value: 'Yadneli Escobedo Gonzalez' },
         { label: 'N° de tarjeta', value: '5101 2514 3337 7769' },
-        { label: 'Concepto',     value: 'Anticipo APJ2026 + nombre del niño' },
+        { label: 'Concepto',     value: 'Anticipo + nombre del niño' },
       ]
     }
   };
@@ -1482,22 +1483,44 @@
     btn.disabled = true;
     btn.textContent = '⏳ Enviando...';
 
-    fetch(APPS_SCRIPT_URL, {
-      method: 'POST',
-      mode: 'no-cors',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    })
-    .then(() => {
-      document.getElementById('form-content').style.display = 'none';
-      document.getElementById('success-msg').style.display = 'block';
-      document.getElementById('formulario').scrollIntoView({ behavior: 'smooth' });
-    })
-    .catch(() => {
-      showAlert('Hubo un problema al enviar. Por favor intenta de nuevo o contáctanos por WhatsApp.');
-      btn.disabled = false;
-      btn.textContent = '🎉 Completar inscripción';
-    });
+    const fileInput = document.getElementById('comprobante');
+    const file = fileInput && fileInput.files[0];
+
+    function enviarDatos(base64Data, mimeType, fileName) {
+      const body = {
+        data: JSON.stringify(payload),
+        file: base64Data || '',
+        mimeType: mimeType || '',
+        fileName: fileName || ''
+      };
+      fetch(APPS_SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      })
+      .then(() => {
+        document.getElementById('form-content').style.display = 'none';
+        document.getElementById('success-msg').style.display = 'block';
+        document.getElementById('formulario').scrollIntoView({ behavior: 'smooth' });
+      })
+      .catch(() => {
+        showAlert('Hubo un problema al enviar. Por favor intenta de nuevo o contáctanos por WhatsApp.');
+        btn.disabled = false;
+        btn.textContent = '🎉 Completar inscripción';
+      });
+    }
+
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = function(ev) {
+        const base64 = ev.target.result.split(',')[1];
+        enviarDatos(base64, file.type, file.name);
+      };
+      reader.readAsDataURL(file);
+    } else {
+      enviarDatos('', '', '');
+    }
   }
 
   function showAlert(msg) {
